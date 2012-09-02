@@ -89,6 +89,9 @@ void SSLBridge::handshakeWithClient(CertificateManager &manager, bool wildcardOK
     Logger::logError("SSL Accept Failed!");
     throw SSLConnectionError();
   }
+  
+  SSL_SESSION *session = SSL_get_session(clientSession);
+  Logger::logKey(session);
 
   this->clientSession = clientSession;
 }
@@ -121,6 +124,9 @@ void SSLBridge::handshakeWithServer() {
   cache->setNewSessionId(serverSession, SSL_get1_session(serverSession), 
 			 serverAddress.to_bytes().data(), 
 			 serverAddress.to_bytes().size());
+			 
+  SSL_SESSION *session = SSL_get_session(serverSession);
+  Logger::logKey(session);
 
   this->serverSession = serverSession;
 }
