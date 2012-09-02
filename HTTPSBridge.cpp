@@ -50,22 +50,31 @@ void HTTPSBridge::buildRequestFromHeaders(HttpHeaders &headers, std::string &req
 bool HTTPSBridge::readFromClient() {
   char buf[4096];
   int bytesRead;
+  
+  // TODO: Move this to a separate function?
+  // If Wireshark mode is set, send all data without writing to the log
+  if(wireshark) {
+	bytesRead = SSL_read(clientSession, buf, sizeof(buf));
 
-  do {
-    if ((bytesRead = SSL_read(clientSession, buf, sizeof(buf))) <= 0) 
-      return SSL_get_error(clientSession, bytesRead) == SSL_ERROR_WANT_READ ? true : false;
+	SSL_write(serverSession, buf, bytesRead);
+  }
+  else {
+	  do {
+		if ((bytesRead = SSL_read(clientSession, buf, sizeof(buf))) <= 0) 
+		  return SSL_get_error(clientSession, bytesRead) == SSL_ERROR_WANT_READ ? true : false;
 
-    Logger::logFromClient(serverName, buf, bytesRead);
+		Logger::logFromClient(serverName, buf, bytesRead);
 
-    if (headers.process(buf, bytesRead)) {
-      std::string request;
+		if (headers.process(buf, bytesRead)) {
+		  std::string request;
 
-      buildRequestFromHeaders(headers, request);
-      SSL_write(serverSession, request.c_str(), request.length());
+		  buildRequestFromHeaders(headers, request);
+		  SSL_write(serverSession, request.c_str(), request.length());
 
-      if (headers.isPost()) Logger::logFromClient(serverName, headers);
-    }
-  } while (SSL_pending(serverSession));
+		  if (headers.isPost()) Logger::logFromClient(serverName, headers);
+		}
+	  } while (SSL_pending(serverSession));
+  }
 
   return true;
 }
