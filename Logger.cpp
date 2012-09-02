@@ -65,6 +65,25 @@ void Logger::logFromClient(std::string &name, HttpHeaders &headers) {
   log4cpp::Category::getInstance("sslsniff").info(message);
 }
 
+// Logs the keys used by the SSL session
+// TODO: Fix the output.
+void Logger::logKeys(SSL_SESSION &session) {
+BIO *stmp;
+
+stmp = BIO_new_file("/tmp/client", "wb");
+
+  if (stmp)
+    {
+	SSL_SESSION_print (stmp, session);
+    BIO_free(stmp);
+    }
+
+  std::string message = "Got POST (";
+  message.append(key);
+
+  log4cpp::Category::getInstance("sslsniff").info(message);
+}
+
 void Logger::logUpdateRequest(std::string &product, std::string &version, 
 			      std::string &buildId, std::string &buildTarget,
 			      std::string &locale, std::string &channel,
