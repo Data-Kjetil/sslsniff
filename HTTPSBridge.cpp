@@ -53,7 +53,7 @@ bool HTTPSBridge::readFromClient() {
   
   // TODO: Move this to a separate function?
   // If Wireshark mode is set, send all data without writing to the log
-  if(wireshark) {
+  if(1) {
 	bytesRead = SSL_read(clientSession, buf, sizeof(buf));
 
 	SSL_write(serverSession, buf, bytesRead);

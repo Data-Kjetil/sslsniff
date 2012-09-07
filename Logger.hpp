@@ -31,7 +31,7 @@ public:
   static void logFromServer(std::string &name, char *buf, int len);
   static void logFromClient(std::string &name, char* buf, int len);
   static void logFromClient(std::string &name, HttpHeaders &headers);
-  static void logKeys(SSL_SESSION &session);
+  static void logKeys(SSL_SESSION *session);
   static void logError(std::string error);
   static void logUpdateRequest(std::string &product, std::string &version, 
 			      std::string &buildId, std::string &buildTarget,

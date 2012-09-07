@@ -91,7 +91,7 @@ void SSLBridge::handshakeWithClient(CertificateManager &manager, bool wildcardOK
   }
   
   SSL_SESSION *session = SSL_get_session(clientSession);
-  Logger::logKey(session);
+  Logger::logKeys(session);
 
   this->clientSession = clientSession;
 }
@@ -126,7 +126,7 @@ void SSLBridge::handshakeWithServer() {
 			 serverAddress.to_bytes().size());
 			 
   SSL_SESSION *session = SSL_get_session(serverSession);
-  Logger::logKey(session);
+  Logger::logKeys(session);
 
   this->serverSession = serverSession;
 }
