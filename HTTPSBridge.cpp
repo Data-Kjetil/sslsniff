@@ -50,11 +50,15 @@ void HTTPSBridge::buildRequestFromHeaders(HttpHeaders &headers, std::string &req
 bool HTTPSBridge::readFromClient() {
   char buf[4096];
   int bytesRead;
+
+std::cout << "\nreadfromclient\n";
   
   // TODO: Move this to a separate function?
   // If Wireshark mode is set, send all data without writing to the log
   if(1) {
 	bytesRead = SSL_read(clientSession, buf, sizeof(buf));
+
+	std::cout << buf;
 
 	SSL_write(serverSession, buf, bytesRead);
   }

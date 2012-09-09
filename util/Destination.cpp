@@ -17,9 +17,11 @@
  * USA
  */
 
-// XXX define one of these through autoconf
-//#define HAVE_PF 
+#if !defined(HAVE_NETFILTER) && !defined(HAVE_PF)
 #define HAVE_NETFILTER 
+#endif
+
+#include "util/Destination.hpp"
 
 #include <arpa/inet.h>
 
@@ -37,9 +39,6 @@
 #include <netinet/in.h>
 #include <net/pfvar.h>
 #endif
-
-
-#include "util/Destination.hpp"
 
 int Destination::getOriginalDestination(boost::asio::ip::tcp::socket &socket,
 					boost::asio::ip::tcp::endpoint &originalDestination)

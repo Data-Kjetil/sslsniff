@@ -74,7 +74,7 @@ stmp = BIO_new_file("/tmp/client", "wb");
 
   if (stmp)
     {
-	//SSL_SESSION_print (stmp, session);
+	//SSL_SESSION_print(stmp, session);
     	BIO_free(stmp);
     }
 
