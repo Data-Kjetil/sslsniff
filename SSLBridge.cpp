@@ -86,17 +86,16 @@ void SSLBridge::handshakeWithClient(CertificateManager &manager, bool wildcardOK
     throw SSLConnectionError();
   }
   
-  SSL_SESSION *session = SSL_get_session(clientSession);
-  Logger::logKeys(session);
-
-	std::cout << "\nConnect with client\n";
+  if (1) { // TODO: fiks
+    SSL_SESSION *session = SSL_get_session(clientSession);
+    Logger::logKeys(session);
+  }
 
   this->clientSession = clientSession;
 }
 
 void SSLBridge::handshakeWithServer() {
   int bogus;
-std::cout << "\nConnect with server\n";
 
   ip::address_v4 serverAddress = serverSocket->remote_endpoint().address().to_v4();
   SSL_CTX *serverCtx           = SSL_CTX_new(SSLv23_client_method());;
@@ -124,10 +123,10 @@ std::cout << "\nConnect with server\n";
 			 serverAddress.to_bytes().data(), 
 			 serverAddress.to_bytes().size());
 			 
-  SSL_SESSION *session = SSL_get_session(serverSession);
-  Logger::logKeys(session);
-
-	std::cout << "\nConnect with server\n";
+  if (1) { // TODO: Fiks.
+    SSL_SESSION *session = SSL_get_session(serverSession);
+    Logger::logKeys(session);
+  }
 
   this->serverSession = serverSession;
 }
@@ -166,7 +165,7 @@ bool SSLBridge::readFromClient() {
     if ((bytesWritten = SSL_write(serverSession, buf, bytesRead)) <= 0) 
       return false; // FIXME
 
-    Logger::logFromClient(serverName, buf, bytesRead);
+    //Logger::logFromClient(serverName, buf, bytesRead);
 
   } while (SSL_pending(clientSession));
 
@@ -185,7 +184,7 @@ bool SSLBridge::readFromServer() {
     if ((bytesWritten = SSL_write(clientSession, buf, bytesRead)) < bytesRead) 
       return false; // FIXME
 
-    Logger::logFromServer(serverName, buf, bytesRead);
+    //Logger::logFromServer(serverName, buf, bytesRead);
   } while (SSL_pending(serverSession));
 
   return true;

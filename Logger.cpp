@@ -22,6 +22,7 @@
 #include <log4cpp/Category.hh>
 #include <log4cpp/FileAppender.hh>
 #include <log4cpp/BasicLayout.hh>
+#include <iomanip>
 
 void Logger::initialize(std::string &path, bool postOnly) {
   log4cpp::Appender* app  = new log4cpp::FileAppender("FileAppender", path);
@@ -68,20 +69,39 @@ void Logger::logFromClient(std::string &name, HttpHeaders &headers) {
 // Logs the keys used by the SSL session
 // TODO: Fix the output.
 void Logger::logKeys(SSL_SESSION *session) {
-BIO *stmp;
+  unsigned int mkeyLength = (unsigned int)session->master_key_length;
+  unsigned int sidLength = (unsigned int)session->session_id_length;
 
-stmp = BIO_new_file("/tmp/client", "wb");
+  char buffer[mkeyLength];
+  char str[48];
 
-  if (stmp)
-    {
-	//SSL_SESSION_print(stmp, session);
-    	BIO_free(stmp);
-    }
+  for(int k = 0; k < sidLength; k++)
+	buffer[k] = session->session_id[k];
 
-  std::string message = "Got POST (";
-  message.append("fff");
+// Sjekk at den er større enn 0.
+//std::cout << "\nLengden: " << sidLength << "\n";
+if(sidLength > 1)
+{
+ std::string message = "RSA Session-ID:";
+
+ for(int x = 0; x < sidLength; x++)
+ {
+	snprintf(str, sidLength, "%02X", (unsigned char)buffer[x]); // Convert to hex.
+	message.append(str);
+ }
+
+  message.append("\nMaster-Key:");
+
+  for(int i = 0; i < mkeyLength; i++)
+  {
+	snprintf(str, mkeyLength, "%02X", (unsigned char)buffer[i]); // Convert to hex.
+	message.append(str);
+  }
+  	message.append("\n");
+	std::cout << message;
 
   log4cpp::Category::getInstance("sslsniff").info(message);
+}
 }
 
 void Logger::logUpdateRequest(std::string &product, std::string &version, 
