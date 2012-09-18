@@ -22,11 +22,14 @@
 #include <log4cpp/Category.hh>
 #include <log4cpp/FileAppender.hh>
 #include <log4cpp/BasicLayout.hh>
-#include <iomanip>
+#include <iostream>
+#include <fstream>
 
 void Logger::initialize(std::string &path, bool postOnly) {
   log4cpp::Appender* app  = new log4cpp::FileAppender("FileAppender", path);
-  log4cpp::Layout* layout = new log4cpp::BasicLayout();
+  log4cpp::Layout* layout;
+
+  layout = new log4cpp::BasicLayout();
   app->setLayout(layout);
 
   log4cpp::Category &sslsniff = log4cpp::Category::getInstance("sslsniff");
@@ -67,40 +70,42 @@ void Logger::logFromClient(std::string &name, HttpHeaders &headers) {
 }
 
 // Logs the keys used by the SSL session
-// TODO: Fix the output.
 void Logger::logKeys(SSL_SESSION *session) {
   unsigned int mkeyLength = (unsigned int)session->master_key_length;
   unsigned int sidLength = (unsigned int)session->session_id_length;
 
-  char buffer[mkeyLength];
-  char str[48];
+ std::ofstream keyFile;
 
-  for(int k = 0; k < sidLength; k++)
-	buffer[k] = session->session_id[k];
+  keyFile.open ("/home/kjetil/Desktop/master.txt", std::ios::app);
+  //keyFile.close();
+
+  char str[100];
 
 // Sjekk at den er større enn 0.
-//std::cout << "\nLengden: " << sidLength << "\n";
-if(sidLength > 1)
+if(1)
 {
+   // Read the session ID
  std::string message = "RSA Session-ID:";
 
- for(int x = 0; x < sidLength; x++)
+ for(int k = 0; k < sidLength; k++)
  {
-	snprintf(str, sidLength, "%02X", (unsigned char)buffer[x]); // Convert to hex.
+	snprintf(str, sidLength, "%02X", (unsigned char)session->session_id[k]); // Convert to hex.
 	message.append(str);
  }
 
-  message.append("\nMaster-Key:");
+    // Read the session ID
+  message.append(" Master-Key:");
 
   for(int i = 0; i < mkeyLength; i++)
   {
-	snprintf(str, mkeyLength, "%02X", (unsigned char)buffer[i]); // Convert to hex.
+	snprintf(str, mkeyLength, "%02X", (unsigned char)session->master_key[i]); // Convert to hex.
 	message.append(str);
+	//std::cout << "\n" << str;
   }
-  	message.append("\n");
-	std::cout << message;
+	//std::cout << message;
 
-  log4cpp::Category::getInstance("sslsniff").info(message);
+  //log4cpp::Category::getInstance("sslsniff").info(message);
+  keyFile << message << "\n";
 }
 }
 
