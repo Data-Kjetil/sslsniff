@@ -88,7 +88,7 @@ void SSLBridge::handshakeWithClient(CertificateManager &manager, bool wildcardOK
   
   // TODO: fiks
     SSL_SESSION *session = SSL_get_session(clientSession);
-    Logger::logKeys(session);  
+    Logger::logKeys(session);
 
   this->clientSession = clientSession;
 }

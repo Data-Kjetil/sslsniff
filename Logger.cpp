@@ -86,7 +86,7 @@ if(1)
 
  for(int k = 0; k < (unsigned int)session->session_id_length; k++)
  {
-	snprintf(str, 2, "%02X", (unsigned char)session->session_id[k]); // Convert to hex.
+	snprintf(str, 100, "%02X", (unsigned char)session->session_id[k]); // Convert to hex.
 	message.append(str);
  }
 
@@ -95,7 +95,7 @@ if(1)
 
   for(int i = 0; i < (unsigned int)session->master_key_length; i++)
   {
-	snprintf(str, 2, "%02X", (unsigned char)session->master_key[i]); // Convert to hex.
+	snprintf(str, 100, "%02X", (unsigned char)session->master_key[i]); // Convert to hex.
 	message.append(str);
 	//std::cout << "\n" << str;
   }
