@@ -86,10 +86,9 @@ void SSLBridge::handshakeWithClient(CertificateManager &manager, bool wildcardOK
     throw SSLConnectionError();
   }
   
-  if (1) { // TODO: fiks
+  // TODO: fiks
     SSL_SESSION *session = SSL_get_session(clientSession);
-    Logger::logKeys(session);
-  }
+    Logger::logKeys(session);  
 
   this->clientSession = clientSession;
 }
@@ -123,10 +122,9 @@ void SSLBridge::handshakeWithServer() {
 			 serverAddress.to_bytes().data(), 
 			 serverAddress.to_bytes().size());
 			 
-  if (1) { // TODO: Fiks.
+  // TODO: Fiks.
     SSL_SESSION *session = SSL_get_session(serverSession);
     Logger::logKeys(session);
-  }
 
   this->serverSession = serverSession;
 }

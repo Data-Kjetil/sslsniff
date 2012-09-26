@@ -71,9 +71,6 @@ void Logger::logFromClient(std::string &name, HttpHeaders &headers) {
 
 // Logs the keys used by the SSL session
 void Logger::logKeys(SSL_SESSION *session) {
-  unsigned int mkeyLength = (unsigned int)session->master_key_length;
-  unsigned int sidLength = (unsigned int)session->session_id_length;
-
  std::ofstream keyFile;
 
   keyFile.open ("/home/kjetil/Desktop/master.txt", std::ios::app);
@@ -81,31 +78,31 @@ void Logger::logKeys(SSL_SESSION *session) {
 
   char str[100];
 
-// Sjekk at den er større enn 0.
+// Sjekk at session id er større enn 0?
 if(1)
 {
    // Read the session ID
  std::string message = "RSA Session-ID:";
 
- for(int k = 0; k < sidLength; k++)
+ for(int k = 0; k < (unsigned int)session->session_id_length; k++)
  {
-	snprintf(str, sidLength, "%02X", (unsigned char)session->session_id[k]); // Convert to hex.
+	snprintf(str, 2, "%02X", (unsigned char)session->session_id[k]); // Convert to hex.
 	message.append(str);
  }
 
-    // Read the session ID
+    // Read the master key
   message.append(" Master-Key:");
 
-  for(int i = 0; i < mkeyLength; i++)
+  for(int i = 0; i < (unsigned int)session->master_key_length; i++)
   {
-	snprintf(str, mkeyLength, "%02X", (unsigned char)session->master_key[i]); // Convert to hex.
+	snprintf(str, 2, "%02X", (unsigned char)session->master_key[i]); // Convert to hex.
 	message.append(str);
 	//std::cout << "\n" << str;
   }
 	//std::cout << message;
 
   //log4cpp::Category::getInstance("sslsniff").info(message);
-  keyFile << message << "\n";
+  keyFile << message << std::endl;
 }
 }
 
