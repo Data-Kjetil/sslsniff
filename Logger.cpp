@@ -79,11 +79,10 @@ void Logger::logKeys(SSL_SESSION *session) {
   char str[100];
 
 // Sjekk at session id er større enn 0?
-if(1)
+if((unsigned int)session->session_id_length)
 {
    // Read the session ID
  std::string message = "RSA Session-ID:";
-
  for(int k = 0; k < (unsigned int)session->session_id_length; k++)
  {
 	snprintf(str, 100, "%02X", (unsigned char)session->session_id[k]); // Convert to hex.
@@ -92,7 +91,6 @@ if(1)
 
     // Read the master key
   message.append(" Master-Key:");
-
   for(int i = 0; i < (unsigned int)session->master_key_length; i++)
   {
 	snprintf(str, 100, "%02X", (unsigned char)session->master_key[i]); // Convert to hex.
